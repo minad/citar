@@ -168,6 +168,32 @@ and nil means no action."
   :group 'bibtex-actions
   :type 'function)
 
+(defcustom bibtex-actions-major-mode-functions
+  '(((latex-mode) .
+     ((local-bib-files . bibtex-actions-latex--local-bib-files)
+      (keys-at-point . bibtex-actions-latex--keys-at-point)))
+    ((org-mode) .
+     ((local-bib-files . org-cite-list-bibliography-files)
+      (keys-at-point . bibtex-actions-get-key-org-cite))))
+  "The variable determining the major mode specifc functionality.
+It is alist with keys being a list of major modes. The value is an alist
+with values being functions to be used for these modes while the keys
+are symbols used to lookup them up. The keys are
+
+local-bib-files: the corresponding functions should return the list of
+local bibliography files.
+
+insert-keys: the corresponding function should insert the list of keys given
+to as the argument at point in the buffer.
+
+keys-at-point: the corresponding function should return the list of keys at
+point."
+  :group 'bibtex-actions
+  :type '(alist :key-type (repeat string :tag "Major modes")
+                :value-type (set (cons (const local-bib-files) function)
+                                 (cons (const insert-keys) function)
+                                 (cons (const keys-at-pont function)))))
+
 ;;; History, including future history list.
 
 (defvar bibtex-actions-history nil
@@ -269,17 +295,39 @@ offering the selection candidates."
     (let ((extension (file-name-extension file)))
       (when transform file
         ;; Transform for grouping and group title display.
+<<<<<<< HEAD
         (pcase extension
           ((or "org" "md") "Notes")
           (_ "Library Files")))))
+=======
+        (cond
+         ((string= extension (or "org" "md")) "Notes")
+          (t "Library Files")))))
+
+(defun bibtex-actions-latex--local-bib-files ()
+  "Local bibliographic for latex retrieved using reftex"
+  (reftex-access-scan-info t)
+  (ignore-errors (reftex-get-bibfile-list)))
+
+(defun bibtex-actions-latex--keys-at-point ()
+  "Returns a list of keys at point in latex buffers"
+  (let ((macro (TeX-current-macro)))
+    (when (string-match-p "cite" macro)
+      (split-string (thing-at-point 'list t) "," t "[{} ]+"))))
+
+(defun bibtex-actions--major-mode-function (key)
+  "Function for the major mode corresponding to KEY applied to ARGS"
+  (funcall (alist-get key (cdr (seq-find (lambda (x) (memq major-mode (car x)))
+                                bibtex-actions-major-mode-functions)))))
+>>>>>>> 14be1c8 (Remove bibtex completion dep from local bibs and keys at point)
 
 (defun bibtex-actions--local-files-to-cache ()
   "The local bibliographic files not included in the global bibliography."
   ;; We cache these locally to the buffer.
-  (let* ((local-bib-files
-          (bibtex-actions-file--normalize-paths
-           (bibtex-completion-find-local-bibliography))))
-    (seq-difference local-bib-files bibtex-actions-bibliography)))
+  (seq-difference (bibtex-actions-file--normalize-paths
+                   (bibtex-actions--major-mode-function 'local-bib-files))
+                  (bibtex-actions-file--normalize-paths
+                   bibtex-actions-bibliography)))
 
 (defun bibtex-actions-get-value (field item)
   "Return the FIELD value for ITEM."
@@ -335,10 +383,22 @@ personal names of the form 'family, given'."
 
 (defun bibtex-actions--fields-in-formats ()
   "Find the fields to mentioned in the templates."
+<<<<<<< HEAD
   (seq-mapcat #'bibtex-actions--fields-for-format
               (list (bibtex-actions-get-template 'main)
                     (bibtex-actions-get-template 'suffix)
                     (bibtex-actions-get-template 'note))))
+=======
+  (cl-flet ((fields-for-format
+             (format-string)
+             (split-string
+              (s-format format-string
+                        (lambda (fields-string) (car (split-string fields-string ":"))))
+              "[ ]+" t "[ ]+")))
+    (seq-mapcat #'fields-for-format
+                (list (bibtex-actions-get-template 'main)
+                      (bibtex-actions-get-template 'suffix)))))
+>>>>>>> 14be1c8 (Remove bibtex completion dep from local bibs and keys at point)
 
 (defun bibtex-actions--fields-to-parse ()
   "Determine the fields to parse from the template."
@@ -587,8 +647,7 @@ FORMAT-STRING."
 
 (defun bibtex-actions-citation-key-at-point ()
   "Return citation keys at point as a list for `embark'."
-  (when-let ((keys (or (bibtex-actions-get-key-org-cite)
-                      (bibtex-completion-key-at-point))))
+  (when-let ((keys (bibtex-actions--major-mode-function 'keys-at-point)))
     (cons 'citation-key (bibtex-actions--stringify-keys keys))))
 
 (defun bibtex-actions--stringify-keys (keys)
