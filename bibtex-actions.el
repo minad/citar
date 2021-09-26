@@ -171,6 +171,7 @@ and nil means no action."
 (defcustom bibtex-actions-major-mode-functions
   '(((latex-mode) .
      ((local-bib-files . bibtex-actions-latex--local-bib-files)
+      (insert-keys . bibtex-actions-latex--insert-keys)
       (keys-at-point . bibtex-actions-latex--keys-at-point)))
     ((org-mode) .
      ((local-bib-files . org-cite-list-bibliography-files)
@@ -295,31 +296,29 @@ offering the selection candidates."
     (let ((extension (file-name-extension file)))
       (when transform file
         ;; Transform for grouping and group title display.
-<<<<<<< HEAD
         (pcase extension
           ((or "org" "md") "Notes")
           (_ "Library Files")))))
-=======
-        (cond
-         ((string= extension (or "org" "md")) "Notes")
-          (t "Library Files")))))
 
 (defun bibtex-actions-latex--local-bib-files ()
-  "Retrieve local bibliographic files for a latex buffer using reftex"
+  "Retrieve local bibliographic files for a latex buffer using reftex."
   (reftex-access-scan-info t)
   (ignore-errors (reftex-get-bibfile-list)))
 
 (defun bibtex-actions-latex--keys-at-point ()
-  "Returns a list of keys at point in latex buffers"
+  "Return a list of keys at point in a latex buffer."
   (let ((macro (TeX-current-macro)))
     (when (string-match-p "cite" macro)
       (split-string (thing-at-point 'list t) "," t "[{} ]+"))))
 
-(defun bibtex-actions--major-mode-function (key)
-  "Function for the major mode corresponding to KEY applied to ARGS"
+(defun bibtex-actions-latex--insert-keys (keys)
+  "Insert comma sperated KEYS in a latex buffer."
+  (string-join keys ", "))
+
+(defun bibtex-actions--major-mode-function (key &rest args)
+  "Function for the major mode corresponding to KEY applied to ARGS."
   (funcall (alist-get key (cdr (seq-find (lambda (x) (memq major-mode (car x)))
                                 bibtex-actions-major-mode-functions)))))
->>>>>>> 14be1c8 (Remove bibtex completion dep from local bibs and keys at point)
 
 (defun bibtex-actions--local-files-to-cache ()
   "The local bibliographic files not included in the global bibliography."
@@ -383,22 +382,10 @@ personal names of the form 'family, given'."
 
 (defun bibtex-actions--fields-in-formats ()
   "Find the fields to mentioned in the templates."
-<<<<<<< HEAD
   (seq-mapcat #'bibtex-actions--fields-for-format
               (list (bibtex-actions-get-template 'main)
                     (bibtex-actions-get-template 'suffix)
                     (bibtex-actions-get-template 'note))))
-=======
-  (cl-flet ((fields-for-format
-             (format-string)
-             (split-string
-              (s-format format-string
-                        (lambda (fields-string) (car (split-string fields-string ":"))))
-              "[ ]+" t "[ ]+")))
-    (seq-mapcat #'fields-for-format
-                (list (bibtex-actions-get-template 'main)
-                      (bibtex-actions-get-template 'suffix)))))
->>>>>>> 14be1c8 (Remove bibtex completion dep from local bibs and keys at point)
 
 (defun bibtex-actions--fields-to-parse ()
   "Determine the fields to parse from the template."
@@ -772,7 +759,7 @@ With prefix, rebuild the cache before offering candidates."
 With prefix, rebuild the cache before offering candidates."
   (interactive (list (bibtex-actions-select-refs
                       :rebuild-cache current-prefix-arg)))
- (bibtex-completion-insert-key
+ (bibtex-actions--major-mode-function 'insert-keys
   (bibtex-actions--extract-keys
    keys-entries)))
 
