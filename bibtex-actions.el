@@ -45,7 +45,6 @@
 (require 'parsebib)
 (require 's)
 ;; Not ideal, find a better FIX
-(require 'reftex)
 (require 'oc)
 
 (declare-function org-element-context "org-element")
@@ -172,11 +171,7 @@ and nil means no action."
   :type 'function)
 
 (defcustom bibtex-actions-major-mode-functions
-  '(((latex-mode) .
-     ((local-bib-files . bibtex-actions-latex--local-bib-files)
-      (insert-keys . bibtex-actions-latex--insert-keys)
-      (keys-at-point . bibtex-actions-latex--keys-at-point)))
-    ((org-mode) .
+  '(((org-mode) .
      ((local-bib-files . org-cite-list-bibliography-files)
       (insert-keys . bibtex-actions--insert-keys-org-cite)
       (keys-at-point . bibtex-actions-get-key-org-cite))))
@@ -197,7 +192,8 @@ point."
   :type '(alist :key-type (repeat string :tag "Major modes")
                 :value-type (set (cons (const local-bib-files) function)
                                  (cons (const insert-keys) function)
-                                 (cons (const keys-at-pont function)))))
+                                 (cons (const insert-citations) function)
+                                 (cons (const keys-at-pont) function))))
 
 ;;; History, including future history list.
 
@@ -747,7 +743,7 @@ With prefix, rebuild the cache before offering candidates."
   (interactive (list (bibtex-actions-select-refs
                       :rebuild-cache current-prefix-arg)))
   ;; TODO
-  (bibtex-completion-insert-citation
+  (bibtex-actions--major-mode-function 'insert-citations
    (bibtex-actions--extract-keys
     keys-entries)))
 
