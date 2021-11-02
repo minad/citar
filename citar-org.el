@@ -85,7 +85,7 @@ Each function takes one argument, a citation."
 
 ;;; Keymaps
 
-(defcustom citar-org-map
+(defcustom citar-org-ref-map
   (let ((map (make-sparse-keymap)))
     (define-key map (kbd "o") '("open source (file or link)" . citar-open))
     (define-key map (kbd "e") '("open bibtex entry" . citar-open-entry))
@@ -98,7 +98,7 @@ Each function takes one argument, a citation."
   :group 'citar-org
   :type '(restricted-sexp :match-alternatives (keymapp)))
 
-(defcustom citar-org-buffer-map
+(defcustom citar-org-key-map
   (let ((map (make-sparse-keymap)))
     (define-key map (kbd "o") '("open source (file or link)" . citar-open))
     (define-key map (kbd "e") '("open bibtex entry" . citar-open-entry))
@@ -242,7 +242,7 @@ strings by style."
 (defun citar-org-citation-finder ()
   "Return org-cite citation keys at point as a list for `embark'."
   (when-let ((keys (citar-get-key-org-cite)))
-    (cons 'oc-citation (citar--stringify-keys keys))))
+    (cons 'citar-org-key (citar--stringify-keys keys))))
 
 ;;; Functions for editing/modifying citations
 
@@ -340,8 +340,8 @@ strings by style."
 
 (with-eval-after-load 'embark
   (add-to-list 'embark-target-finders 'citar-org-citation-finder)
-  (add-to-list 'embark-keymap-alist '(bib-reference . citar-org-map))
-  (add-to-list 'embark-keymap-alist '(oc-citation . citar-org-buffer-map))
+  (add-to-list 'embark-keymap-alist '(citar-ref . citar-org-ref-map))
+  (add-to-list 'embark-keymap-alist '(citar-org-key . citar-org-key-map))
   (add-to-list 'embark-pre-action-hooks '(org-cite-insert embark--ignore-target)))
 
 ;; Load this last.

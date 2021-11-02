@@ -178,7 +178,7 @@ and nil means no action."
 ;;; Keymaps
 
 ;;;###autoload
-(defcustom citar-map
+(defcustom citar-ref-map
   (let ((map (make-sparse-keymap)))
     (define-key map (kbd "t") '("add pdf attachment" . citar-add-pdf-attachment))
     (define-key map (kbd "a") '("add pdf to library" . citar-add-pdf-to-library))
@@ -201,7 +201,7 @@ and nil means no action."
   :type '(restricted-sexp :match-alternatives (keymapp)))
 
 ;;;###autoload
-(defcustom citar-buffer-map
+(defcustom citar-key-map
   (let ((map (make-sparse-keymap)))
     (define-key map (kbd "o") '("open source document" . citar-open))
     (define-key map (kbd "e") '("open bibtex entry" . citar-open-entry))
@@ -213,7 +213,7 @@ and nil means no action."
     ;; https://github.com/oantolin/embark/issues/251
     (define-key map (kbd "RET") '("default action" . citar-run-default-action))
     map)
-  "Keymap for Embark citation-key actions."
+  "Keymap for Embark citar-key actions."
   :group 'citar
   :type '(restricted-sexp :match-alternatives (keymapp)))
 
@@ -241,7 +241,7 @@ offering the selection candidates."
              (if (eq action 'metadata)
                  `(metadata
                    (affixation-function . citar--affixation)
-                   (category . bib-reference))
+                   (category . citar-ref))
                (complete-with-action action candidates string predicate)))
            nil nil nil
            'citar-history citar-presets nil)))
@@ -593,7 +593,7 @@ FORMAT-STRING."
   "Return citation keys at point as a list for `embark'."
   (when-let ((keys (or (citar-get-key-org-cite)
                       (bibtex-completion-key-at-point))))
-    (cons 'citation-key (citar--stringify-keys keys))))
+    (cons 'citar-key (citar--stringify-keys keys))))
 
 (defun citar--stringify-keys (keys)
   "Return a list of KEYS as a crm-string for `embark'."
@@ -602,8 +602,8 @@ FORMAT-STRING."
 ;;;###autoload
 (with-eval-after-load 'embark
   (add-to-list 'embark-target-finders 'citar-citation-key-at-point)
-  (add-to-list 'embark-keymap-alist '(bib-reference . citar-map))
-  (add-to-list 'embark-keymap-alist '(citation-key . citar-buffer-map)))
+  (add-to-list 'embark-keymap-alist '(citar-ref . citar-ref-map))
+  (add-to-list 'embark-keymap-alist '(citar-key . citar-key-map)))
 
 ;;; Commands
 
