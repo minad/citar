@@ -85,7 +85,7 @@ Each function takes one argument, a citation."
 
 ;;; Keymaps
 
-(defcustom citar-org-ref-map
+(defvar citar-org-ref-map
   (let ((map (make-sparse-keymap)))
     (define-key map (kbd "o") '("open source (file or link)" . citar-open))
     (define-key map (kbd "e") '("open bibtex entry" . citar-open-entry))
@@ -94,11 +94,9 @@ Each function takes one argument, a citation."
     (define-key map (kbd "n") '("open notes" . citar-open-notes))
     (define-key map (kbd "r") '("refresh" . citar-refresh))
     map)
-  "Keymap for org-cite Embark minibuffer functionality."
-  :group 'citar-org
-  :type '(restricted-sexp :match-alternatives (keymapp)))
+  "Keymap for org-cite Embark minibuffer functionality.")
 
-(defcustom citar-org-key-map
+(defvar citar-org-key-map
   (let ((map (make-sparse-keymap)))
     (define-key map (kbd "o") '("open source (file or link)" . citar-open))
     (define-key map (kbd "e") '("open bibtex entry" . citar-open-entry))
@@ -107,11 +105,9 @@ Each function takes one argument, a citation."
     (define-key map (kbd "n") '("open notes" . citar-open-notes))
     (define-key map (kbd "r") '("refresh" . citar-refresh))
     map)
-  "Keymap for org-cite Embark at-point functionality."
-  :group 'citar-org
-  :type '(restricted-sexp :match-alternatives (keymapp)))
+  "Keymap for org-cite Embark at-point functionality.")
 
-(defcustom citar-org-citation-map
+(defvar citar-org-citation-map
   (let ((map (make-sparse-keymap)))
     (define-key map (kbd "<mouse-1>") '("default action" . citar-dwim))
     (with-eval-after-load 'embark
@@ -122,9 +118,7 @@ Each function takes one argument, a citation."
     (define-key map (kbd "S-<right>") '("shift right" . citar-org-shift-reference-right))
     (define-key map (kbd "C-p") '("update prefix/suffix" . citar-org-update-pre-suffix))
     map)
-  "Keymap for interacting with org citations at point."
-  :group 'citar-org
-  :type '(restricted-sexp :match-alternatives (keymapp)))
+  "Keymap for interacting with org citations at point.")
 
 ;; TODO maybe connvert to defcustoms. But this is not really the right approach;
 ;; better to just run the export processors to get the previews. But we need

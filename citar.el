@@ -177,7 +177,7 @@ and nil means no action."
 
 ;;; Keymaps
 
-(defcustom citar-ref-map
+(defvar citar-ref-map
   (let ((map (make-sparse-keymap)))
     (define-key map (kbd "t") '("add pdf attachment" . citar-add-pdf-attachment))
     (define-key map (kbd "a") '("add pdf to library" . citar-add-pdf-to-library))
@@ -195,11 +195,9 @@ and nil means no action."
     ;; https://github.com/oantolin/embark/issues/251
     (define-key map (kbd "RET") '("default action" . citar-run-default-action))
     map)
-  "Keymap for Embark minibuffer actions."
-  :group 'oc-citar
-  :type '(restricted-sexp :match-alternatives (keymapp)))
+  "Keymap for Embark minibuffer actions.")
 
-(defcustom citar-key-map
+(defvar citar-key-map
   (let ((map (make-sparse-keymap)))
     (define-key map (kbd "o") '("open source document" . citar-open))
     (define-key map (kbd "e") '("open bibtex entry" . citar-open-entry))
@@ -211,9 +209,7 @@ and nil means no action."
     ;; https://github.com/oantolin/embark/issues/251
     (define-key map (kbd "RET") '("default action" . citar-run-default-action))
     map)
-  "Keymap for Embark citar-key actions."
-  :group 'citar
-  :type '(restricted-sexp :match-alternatives (keymapp)))
+  "Keymap for Embark citar-key actions.")
 
 ;;; Completion functions
 
