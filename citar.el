@@ -1,4 +1,4 @@
-;;; bibtex-actions.el --- Bibliographic commands based on completing-read -*- lexical-binding: t; -*-
+;;; citar.el --- Bibliographic commands based on completing-read -*- lexical-binding: t; -*-
 ;;
 ;; Copyright (C) 2021 Bruce D'Arcus
 ;;
@@ -7,7 +7,7 @@
 ;; Created: February 27, 2021
 ;; License: GPL-3.0-or-later
 ;; Version: 0.4
-;; Homepage: https://github.com/bdarcus/bibtex-actions
+;; Homepage: https://github.com/bdarcus/citar
 ;; Package-Requires: ((emacs "26.3") (bibtex-completion "1.0") (parsebib "3.0"))
 ;;
 ;; This file is not part of GNU Emacs.
