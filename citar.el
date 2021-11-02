@@ -177,7 +177,6 @@ and nil means no action."
 
 ;;; Keymaps
 
-;;;###autoload
 (defcustom citar-ref-map
   (let ((map (make-sparse-keymap)))
     (define-key map (kbd "t") '("add pdf attachment" . citar-add-pdf-attachment))
@@ -200,7 +199,6 @@ and nil means no action."
   :group 'oc-citar
   :type '(restricted-sexp :match-alternatives (keymapp)))
 
-;;;###autoload
 (defcustom citar-key-map
   (let ((map (make-sparse-keymap)))
     (define-key map (kbd "o") '("open source document" . citar-open))
