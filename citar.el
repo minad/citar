@@ -238,7 +238,7 @@ offering the selection candidates."
            (lambda (string predicate action)
              (if (eq action 'metadata)
                  `(metadata
-                   (affixation-function . citar--affixation)
+                   (affixation-function . ,#'citar--affixation)
                    (category . citar-ref))
                (complete-with-action action candidates string predicate)))
            nil nil nil
@@ -599,7 +599,7 @@ FORMAT-STRING."
 
 ;;;###autoload
 (with-eval-after-load 'embark
-  (add-to-list 'embark-target-finders 'citar-citation-key-at-point)
+  (add-to-list 'embark-target-finders #'citar-citation-key-at-point)
   (add-to-list 'embark-keymap-alist '(citar-ref . citar-ref-map))
   (add-to-list 'embark-keymap-alist '(citar-key . citar-key-map)))
 
